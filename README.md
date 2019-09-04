@@ -1,3 +1,5 @@
-# Captain
+# Helm CRDs
 
-The real Helm 3
+* HelmRequest
+* Release
+* ChartRepo
