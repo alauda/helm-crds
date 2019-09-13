@@ -28,6 +28,10 @@ type FakeAppV1alpha1 struct {
 	*testing.Fake
 }
 
+func (c *FakeAppV1alpha1) Charts(namespace string) v1alpha1.ChartInterface {
+	return &FakeCharts{c, namespace}
+}
+
 func (c *FakeAppV1alpha1) ChartRepos(namespace string) v1alpha1.ChartRepoInterface {
 	return &FakeChartRepos{c, namespace}
 }
