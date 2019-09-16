@@ -2,9 +2,11 @@ module github.com/alauda/helm-crds
 
 go 1.12
 
-replace k8s.io/apimachinery => k8s.io/apimachinery v0.0.0-20190515023456-b74e4c97951f
+replace k8s.io/api => k8s.io/api v0.0.0-20190313235455-40a48860b5ab
 
-replace k8s.io/client-go => k8s.io/client-go v0.0.0-20190515063710-7b18d6600f6b
+replace k8s.io/client-go => k8s.io/client-go v11.0.0+incompatible
+
+replace k8s.io/apimachinery => k8s.io/apimachinery v0.0.0-20190313205120-d7deff9243b1
 
 replace k8s.io/apiserver => k8s.io/apiserver v0.0.0-20190606205144-71ebb8303503
 
@@ -53,4 +55,5 @@ require (
 	k8s.io/klog v0.3.3
 	k8s.io/kube-openapi v0.0.0-20190603182131-db7b694dc208 // indirect
 	k8s.io/utils v0.0.0-20190607212802-c55fbcfc754a // indirect
+	sigs.k8s.io/yaml v1.1.0 // indirect
 )
