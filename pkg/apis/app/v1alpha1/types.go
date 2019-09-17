@@ -148,6 +148,9 @@ const (
 
 	// ChartRepoFailed means captain is unable to retrieve index info from this repo
 	ChartRepoFailed ChartRepoPhase = "Failed"
+
+	// ChartRepoPending means this chartrepo is syncing or pending
+	ChartRepoPending ChartRepoPhase = "Pending"
 )
 
 type ChartRepoStatus struct {
