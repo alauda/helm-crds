@@ -133,6 +133,10 @@ func (in *ChartRepo) ValidateUpdate(old runtime.Object) error {
 	return nil
 }
 
+func (in *ChartRepo) ValidateDelete() error {
+	return nil
+}
+
 type ChartRepoSpec struct {
 	// URL is the repo's url
 	URL string `json:"url"`
@@ -478,6 +482,10 @@ func (in *HelmRequest) ValidateUpdate(old runtime.Object) error {
 
 	return nil
 
+}
+
+func (in *HelmRequest) ValidateDelete() error {
+	return nil
 }
 
 //IsClusterSynced check if this HelmRequest has been synced to cluster
