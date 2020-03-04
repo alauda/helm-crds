@@ -120,16 +120,16 @@ func (in *ChartRepo) ValidateCreate() error {
 }
 
 func (in *ChartRepo) ValidateUpdate(old runtime.Object) error {
-	klog.V(4).Info("validate chartrepo update: ", in.GetName())
-
-	oldRepo, ok := old.(*ChartRepo)
-	if !ok {
-		return fmt.Errorf("expect old object to be a %T instead of %T", oldRepo, old)
-	}
-
-	if in.Spec.URL != oldRepo.Spec.URL {
-		return fmt.Errorf(".spec.url is immutable")
-	}
+	//klog.V(4).Info("validate chartrepo update: ", in.GetName())
+	//
+	//oldRepo, ok := old.(*ChartRepo)
+	//if !ok {
+	//	return fmt.Errorf("expect old object to be a %T instead of %T", oldRepo, old)
+	//}
+	//
+	//if in.Spec.URL != oldRepo.Spec.URL {
+	//	return fmt.Errorf(".spec.url is immutable")
+	//}
 	return nil
 }
 
@@ -152,6 +152,9 @@ const (
 
 	// ChartRepoFailed means captain is unable to retrieve index info from this repo
 	ChartRepoFailed ChartRepoPhase = "Failed"
+
+	// ChartRepoPending means this chartrepo is syncing or pending
+	ChartRepoPending ChartRepoPhase = "Pending"
 )
 
 type ChartRepoStatus struct {
