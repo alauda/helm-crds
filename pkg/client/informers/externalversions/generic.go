@@ -22,6 +22,7 @@ import (
 	"fmt"
 
 	v1alpha1 "github.com/alauda/helm-crds/pkg/apis/app/v1alpha1"
+	v1beta1 "github.com/alauda/helm-crds/pkg/apis/app/v1beta1"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )
@@ -61,6 +62,16 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.App().V1alpha1().HelmRequests().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("releases"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.App().V1alpha1().Releases().Informer()}, nil
+
+		// Group=app.alauda.io, Version=v1beta1
+	case v1beta1.SchemeGroupVersion.WithResource("charts"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.App().V1beta1().Charts().Informer()}, nil
+	case v1beta1.SchemeGroupVersion.WithResource("chartrepos"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.App().V1beta1().ChartRepos().Informer()}, nil
+	case v1beta1.SchemeGroupVersion.WithResource("helmrequests"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.App().V1beta1().HelmRequests().Informer()}, nil
+	case v1beta1.SchemeGroupVersion.WithResource("releases"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.App().V1beta1().Releases().Informer()}, nil
 
 	}
 
