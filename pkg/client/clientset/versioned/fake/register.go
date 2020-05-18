@@ -20,6 +20,7 @@ package fake
 
 import (
 	appv1alpha1 "github.com/alauda/helm-crds/pkg/apis/app/v1alpha1"
+	appv1beta1 "github.com/alauda/helm-crds/pkg/apis/app/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
@@ -32,6 +33,7 @@ var codecs = serializer.NewCodecFactory(scheme)
 var parameterCodec = runtime.NewParameterCodec(scheme)
 var localSchemeBuilder = runtime.SchemeBuilder{
 	appv1alpha1.AddToScheme,
+	appv1beta1.AddToScheme,
 }
 
 // AddToScheme adds all types of this clientset into the given scheme. This allows composition
