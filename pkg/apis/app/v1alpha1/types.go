@@ -354,6 +354,9 @@ type HelmRequestStatus struct {
 
 	// Notes is the contents from helm (after helm install successfully it will be printed to the console
 	Notes string `json:"notes,omitempty"`
+
+	// Verions is the real version that installed
+	Version string `json:"version,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
