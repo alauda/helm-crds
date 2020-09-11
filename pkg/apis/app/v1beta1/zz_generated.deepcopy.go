@@ -56,7 +56,7 @@ func (in *Chart) DeepCopyObject() runtime.Object {
 func (in *ChartList) DeepCopyInto(out *ChartList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	in.ListMeta.DeepCopyInto(&out.ListMeta)
+	out.ListMeta = in.ListMeta
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]Chart, len(*in))
@@ -117,7 +117,7 @@ func (in *ChartRepo) DeepCopyObject() runtime.Object {
 func (in *ChartRepoList) DeepCopyInto(out *ChartRepoList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	in.ListMeta.DeepCopyInto(&out.ListMeta)
+	out.ListMeta = in.ListMeta
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]ChartRepo, len(*in))
@@ -272,7 +272,7 @@ func (in *HelmRequest) DeepCopyObject() runtime.Object {
 func (in *HelmRequestList) DeepCopyInto(out *HelmRequestList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	in.ListMeta.DeepCopyInto(&out.ListMeta)
+	out.ListMeta = in.ListMeta
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]HelmRequest, len(*in))
@@ -393,7 +393,7 @@ func (in *Release) DeepCopyObject() runtime.Object {
 func (in *ReleaseList) DeepCopyInto(out *ReleaseList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	in.ListMeta.DeepCopyInto(&out.ListMeta)
+	out.ListMeta = in.ListMeta
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]Release, len(*in))
