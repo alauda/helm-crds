@@ -529,6 +529,24 @@ func (in *HelmRequest) IsClusterSynced(name string) bool {
 	return false
 }
 
+// GetReleaseName get release name. If it's empty in spec, use hr's name
+func (in *HelmRequest) GetReleaseName() string {
+	name := in.GetName()
+	if in.Spec.ReleaseName != "" {
+		name = in.Spec.ReleaseName
+	}
+	return name
+}
+
+// GetReleaseName get release namespace. If it's not set, use hr's namespace
+func (in *HelmRequest) GetReleaseNamespace() string {
+	ns := in.GetNamespace()
+	if in.Spec.Namespace != "" {
+		ns = in.Spec.Namespace
+	}
+	return ns
+}
+
 // ParseChartName is a simple function that parse chart name
 func ParseChartName(name string) (repo, chart string) {
 	data := strings.Split(name, "/")
