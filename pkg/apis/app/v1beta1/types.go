@@ -381,6 +381,9 @@ type HelmRequestStatus struct {
 
 	// Verions is the real version that installed
 	Version string `json:"version,omitempty"`
+
+	// Reason will store the reason why the HelmRequest deploy failed
+	Reason string `json:"reason,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
