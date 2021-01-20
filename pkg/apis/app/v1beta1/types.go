@@ -130,9 +130,9 @@ type ChartRepoSpec struct {
 	// Secret contains information about how to auth to this repo
 	Secret *v1.SecretReference `json:"secret,omitempty"`
 	// new in v1beta1
-	Type   string              `json:"type"`
+	Type string `json:"type"`
 	// new in v1beta1.if type is Chart, this is optional and it will provide some compatible with v1alpha1
-	Source *ChartRepoSource    `json:"source"`
+	Source *ChartRepoSource `json:"source"`
 }
 
 type ChartRepoStatus struct {
@@ -148,7 +148,7 @@ type ChartRepoStatus struct {
 // For example, users store some charts source on a VCS, it can be used to generate a helm chart repo
 type ChartRepoSource struct {
 	// vcs url
-	URL  string `json:"url"`
+	URL string `json:"url"`
 	// may be root, may be a subdir
 	Path string `json:"path"`
 }
@@ -382,6 +382,12 @@ type HelmRequestStatus struct {
 
 	// Notes is the contents from helm (after helm install successfully it will be printed to the console
 	Notes string `json:"notes,omitempty"`
+
+	// Verions is the real version that installed
+	Version string `json:"version,omitempty"`
+
+	// Reason will store the reason why the HelmRequest deploy failed
+	Reason string `json:"reason,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
