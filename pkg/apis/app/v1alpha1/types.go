@@ -354,6 +354,9 @@ const (
 
 	// ConditionValidated means target chart has been downloaded, and permission check passed
 	ConditionValidated HelmRequestConditionType = "Validated"
+
+	// ConditionInitialized means this helmrequest has been initialized (chart processed)
+	ConditionInitialized HelmRequestConditionType = "Initialized"
 )
 
 type HelmRequestCondition struct {
