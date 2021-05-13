@@ -120,16 +120,16 @@ func (in *ChartRepo) ValidateCreate() error {
 }
 
 func (in *ChartRepo) ValidateUpdate(old runtime.Object) error {
-	klog.V(4).Info("validate chartrepo update: ", in.GetName())
-
-	oldRepo, ok := old.(*ChartRepo)
-	if !ok {
-		return fmt.Errorf("expect old object to be a %T instead of %T", oldRepo, old)
-	}
-
-	if in.Spec.URL != oldRepo.Spec.URL {
-		return fmt.Errorf(".spec.url is immutable")
-	}
+	//klog.V(4).Info("validate chartrepo update: ", in.GetName())
+	//
+	//oldRepo, ok := old.(*ChartRepo)
+	//if !ok {
+	//	return fmt.Errorf("expect old object to be a %T instead of %T", oldRepo, old)
+	//}
+	//
+	//if in.Spec.URL != oldRepo.Spec.URL {
+	//	return fmt.Errorf(".spec.url is immutable")
+	//}
 	return nil
 }
 
@@ -152,6 +152,9 @@ const (
 
 	// ChartRepoFailed means captain is unable to retrieve index info from this repo
 	ChartRepoFailed ChartRepoPhase = "Failed"
+
+	// ChartRepoPending means this chartrepo is syncing or pending
+	ChartRepoPending ChartRepoPhase = "Pending"
 )
 
 type ChartRepoStatus struct {
@@ -344,6 +347,43 @@ const (
 	HelmRequestUnknown HelmRequestPhase = "Unknown"
 )
 
+// HelmRequestConditionType is a valid value for HelmRequestCondition.Type
+type HelmRequestConditionType string
+
+// These are valid conditions of HelmRequestConditionType.
+const (
+	// ConditionReady indicates than this hr is synced.
+	ConditionReady HelmRequestConditionType = "Ready"
+
+	// ConditionValidated means target chart has been downloaded, and permission check passed
+	ConditionValidated HelmRequestConditionType = "Validated"
+
+	// ConditionInitialized means this helmrequest has been initialized (chart processed)
+	ConditionInitialized HelmRequestConditionType = "Initialized"
+)
+
+type HelmRequestCondition struct {
+	// Type is the type of the condition.
+	// More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions
+	Type HelmRequestConditionType `json:"type" protobuf:"bytes,1,opt,name=type,casttype=HelmRequestConditionType"`
+	// Status is the status of the condition.
+	// Can be True, False, Unknown.
+	// More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions
+	Status v1.ConditionStatus `json:"status" protobuf:"bytes,2,opt,name=status,casttype=ConditionStatus"`
+	// Last time we probed the condition.
+	// +optional
+	LastProbeTime metav1.Time `json:"lastProbeTime,omitempty" protobuf:"bytes,3,opt,name=lastProbeTime"`
+	// Last time the condition transitioned from one status to another.
+	// +optional
+	LastTransitionTime metav1.Time `json:"lastTransitionTime,omitempty" protobuf:"bytes,4,opt,name=lastTransitionTime"`
+	// Unique, one-word, CamelCase reason for the condition's last transition.
+	// +optional
+	Reason string `json:"reason,omitempty" protobuf:"bytes,5,opt,name=reason"`
+	// Human-readable message indicating details about last transition.
+	// +optional
+	Message string `json:"message,omitempty" protobuf:"bytes,6,opt,name=message"`
+}
+
 type HelmRequestStatus struct {
 	Phase HelmRequestPhase `json:"phase,omitempty"`
 	// LastSpecHash store the has value of the synced spec, if this value not equal to the current one,
@@ -354,6 +394,8 @@ type HelmRequestStatus struct {
 
 	// Notes is the contents from helm (after helm install successfully it will be printed to the console
 	Notes string `json:"notes,omitempty"`
+
+	Conditions []HelmRequestCondition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,2,rep,name=conditions"`
 
 	// Verions is the real version that installed
 	Version string `json:"version,omitempty"`
