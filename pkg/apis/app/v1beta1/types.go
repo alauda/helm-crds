@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"strings"
 
+	v1 "k8s.io/api/core/v1"
+
 	"github.com/ghodss/yaml"
 	"helm.sh/helm/pkg/chartutil"
 
@@ -15,7 +17,6 @@ import (
 	"helm.sh/helm/pkg/release"
 
 	"helm.sh/helm/pkg/repo"
-	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog"
@@ -172,6 +173,9 @@ const (
 
 	// ChartRepoFailed means captain is unable to retrieve index info from this repo
 	ChartRepoFailed ChartRepoPhase = "Failed"
+
+	// ChartRepoPending means this chartrepo is syncing or pending
+	ChartRepoPending ChartRepoPhase = "Pending"
 )
 
 func (in *ChartRepo) ValidateCreate() error {
@@ -541,7 +545,7 @@ func (in *HelmRequest) GetReleaseName() string {
 	return name
 }
 
-// GetReleaseName get release namespace. If it's not set, use hr's namespace
+// GetReleaseNamespace get release namespace. If it's not set, use hr's namespace
 func (in *HelmRequest) GetReleaseNamespace() string {
 	ns := in.GetNamespace()
 	if in.Spec.Namespace != "" {
