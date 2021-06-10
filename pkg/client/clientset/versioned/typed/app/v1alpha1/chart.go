@@ -128,7 +128,7 @@ func (c *charts) Update(chart *v1alpha1.Chart) (result *v1alpha1.Chart, err erro
 		Resource("charts").
 		Name(chart.Name).
 		Body(chart).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
