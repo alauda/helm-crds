@@ -5,18 +5,16 @@ import (
 	"reflect"
 	"strings"
 
-	v1 "k8s.io/api/core/v1"
-
-	"github.com/ghodss/yaml"
-	"helm.sh/helm/pkg/chartutil"
-
-	"github.com/thoas/go-funk"
+	"helm.sh/helm/v3/pkg/chartutil"
+	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v3/pkg/repo"
+	"helm.sh/helm/v3/pkg/time"
 
 	"github.com/alauda/component-base/regex"
 	"github.com/fatih/structs"
-	"helm.sh/helm/pkg/release"
-
-	"helm.sh/helm/pkg/repo"
+	"github.com/ghodss/yaml"
+	"github.com/thoas/go-funk"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog"
@@ -60,11 +58,11 @@ type ReleaseSpec struct {
 
 type ReleaseStatus struct {
 	// FirstDeployed is when the release was first deployed.
-	FirstDeployed metav1.Time `json:"first_deployed,omitempty"`
+	FirstDeployed time.Time `json:"first_deployed,omitempty"`
 	// LastDeployed is when the release was last deployed.
-	LastDeployed metav1.Time `json:"last_deployed,omitempty"`
+	LastDeployed time.Time `json:"last_deployed,omitempty"`
 	// Deleted tracks when this object was deleted.
-	Deleted metav1.Time `json:"deleted,omitempty"`
+	Deleted time.Time `json:"deleted,omitempty"`
 	// Description is human-friendly "log entry" about this release.
 	Description string `json:"Description,omitempty"`
 	// Status is the current state of the release
@@ -75,10 +73,10 @@ type ReleaseStatus struct {
 
 func (in *ReleaseStatus) CopyFromReleaseInfo(info *release.Info) {
 	in.Status = info.Status
-	in.Deleted = metav1.NewTime(info.Deleted)
+	in.Deleted = info.Deleted
 	in.Description = info.Description
-	in.FirstDeployed = metav1.NewTime(info.FirstDeployed)
-	in.LastDeployed = metav1.NewTime(info.LastDeployed)
+	in.FirstDeployed = info.FirstDeployed
+	in.LastDeployed = info.LastDeployed
 	in.Notes = info.Notes
 }
 
@@ -86,10 +84,10 @@ func (in *ReleaseStatus) ToReleaseInfo() *release.Info {
 	var info release.Info
 
 	info.Status = in.Status
-	info.Deleted = in.Deleted.Time
+	info.Deleted = in.Deleted
 	info.Description = in.Description
-	info.FirstDeployed = in.FirstDeployed.Time
-	info.LastDeployed = in.LastDeployed.Time
+	info.FirstDeployed = in.FirstDeployed
+	info.LastDeployed = in.LastDeployed
 	info.Notes = in.Notes
 	return &info
 }

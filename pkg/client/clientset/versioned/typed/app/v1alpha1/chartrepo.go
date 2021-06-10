@@ -19,6 +19,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"context"
 	"time"
 
 	v1alpha1 "github.com/alauda/helm-crds/pkg/apis/app/v1alpha1"
@@ -71,7 +72,7 @@ func (c *chartRepos) Get(name string, options v1.GetOptions) (result *v1alpha1.C
 		Resource("chartrepos").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -88,7 +89,7 @@ func (c *chartRepos) List(opts v1.ListOptions) (result *v1alpha1.ChartRepoList, 
 		Resource("chartrepos").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -105,7 +106,7 @@ func (c *chartRepos) Watch(opts v1.ListOptions) (watch.Interface, error) {
 		Resource("chartrepos").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
-		Watch()
+		Watch(context.Background())
 }
 
 // Create takes the representation of a chartRepo and creates it.  Returns the server's representation of the chartRepo, and an error, if there is any.
@@ -115,7 +116,7 @@ func (c *chartRepos) Create(chartRepo *v1alpha1.ChartRepo) (result *v1alpha1.Cha
 		Namespace(c.ns).
 		Resource("chartrepos").
 		Body(chartRepo).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -128,7 +129,7 @@ func (c *chartRepos) Update(chartRepo *v1alpha1.ChartRepo) (result *v1alpha1.Cha
 		Resource("chartrepos").
 		Name(chartRepo.Name).
 		Body(chartRepo).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -144,7 +145,7 @@ func (c *chartRepos) UpdateStatus(chartRepo *v1alpha1.ChartRepo) (result *v1alph
 		Name(chartRepo.Name).
 		SubResource("status").
 		Body(chartRepo).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -156,7 +157,7 @@ func (c *chartRepos) Delete(name string, options *v1.DeleteOptions) error {
 		Resource("chartrepos").
 		Name(name).
 		Body(options).
-		Do().
+		Do(context.Background()).
 		Error()
 }
 
@@ -172,7 +173,7 @@ func (c *chartRepos) DeleteCollection(options *v1.DeleteOptions, listOptions v1.
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Timeout(timeout).
 		Body(options).
-		Do().
+		Do(context.Background()).
 		Error()
 }
 
@@ -185,7 +186,7 @@ func (c *chartRepos) Patch(name string, pt types.PatchType, data []byte, subreso
 		SubResource(subresources...).
 		Name(name).
 		Body(data).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
