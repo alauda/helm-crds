@@ -374,6 +374,9 @@ const (
 	HelmRequestPending HelmRequestPhase = "Pending"
 
 	HelmRequestUnknown HelmRequestPhase = "Unknown"
+
+	// HelmRequestUninstalling is telling that current helmrequest should be uninstalled
+	HelmRequestUninstalling HelmRequestPhase = "Uninstalling"
 )
 
 // HelmRequestConditionType is a valid value for HelmRequestCondition.Type
