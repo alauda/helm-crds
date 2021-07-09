@@ -266,9 +266,9 @@ type HelmRequestSpec struct {
 
 	// The following 3 are the new fields added
 	// TargetClusters defines the target clusters which the chart will be installed
-	TargetClusters TargetClusters `json:"targetClusters,omitempty"`
+	TargetClusters *TargetClusters `json:"targetClusters,omitempty"`
 	// Source defines the source of chart, If this field is set, Chart and Version field will be ignored(useless)
-	Source ChartSource `json:"source,omitempty"`
+	Source *ChartSource `json:"source,omitempty"`
 	// ClusterParallelism defines the the maximum desired number of clusters the chart will be installed
 	ClusterParallelism int32 `json:"clusterParallelism,omitempty"`
 
