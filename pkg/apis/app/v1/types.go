@@ -440,7 +440,7 @@ type HelmRequestStatus struct {
 
 type ClusterSyncResult struct {
 	// Endpoint store the apiserver's endpoint of the cluster
-	Endpoint string
+	Endpoint string `json:"endpoint,omitempty"`
 	// Phase store the phase of the chart which installed into current cluster
 	Phase HelmRequestPhase `json:"phase,omitempty"`
 	// The following 1 is the new field added
