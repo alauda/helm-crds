@@ -424,7 +424,7 @@ type HelmRequestStatus struct {
 
 	// The following 1 is the new field added
 	// TargetClusterSyncResults will store the chart sync result of every target cluster
-	TargetClusterSyncResults []ClusterSyncResult `json:"targetClusterSyncResults,omitempty"`
+	TargetClusterSyncResults map[string]ClusterSyncResult `json:"targetClusterSyncResults,omitempty"`
 
 	// Notes is the contents from helm (after helm install successfully it will be printed to the console
 	Notes string `json:"notes,omitempty"`
@@ -439,8 +439,8 @@ type HelmRequestStatus struct {
 }
 
 type ClusterSyncResult struct {
-	// Name store the name of cluster
-	Name string `json:"name,omitempty"`
+	// Endpoint store the apiserver's endpoint of the cluster
+	Endpoint string
 	// Phase store the phase of the chart which installed into current cluster
 	Phase HelmRequestPhase `json:"phase,omitempty"`
 	// The following 1 is the new field added
