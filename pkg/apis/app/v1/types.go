@@ -269,8 +269,6 @@ type HelmRequestSpec struct {
 	TargetClusters *TargetClusters `json:"targetClusters,omitempty"`
 	// Source defines the source of chart, If this field is set, Chart and Version field will be ignored(useless)
 	Source *ChartSource `json:"source,omitempty"`
-	// ClusterParallelism defines the the maximum desired number of clusters the chart will be installed
-	ClusterParallelism int32 `json:"clusterParallelism,omitempty"`
 
 	// Dependencies is the dependencies of this HelmRequest, it's a list of there names
 	// THe dependencies must lives in the same namespace, and each of them must be in Synced status
@@ -442,16 +440,16 @@ type HelmRequestStatus struct {
 
 type ClusterSyncResult struct {
 	// Name store the name of cluster
-	Name string
+	Name string `json:"name,omitempty"`
 	// Phase store the phase of the chart which installed into current cluster
 	Phase HelmRequestPhase `json:"phase,omitempty"`
 	// The following 1 is the new field added
 	// AppStatus store the status of the application
 	AppStatus AppStatus `json:"appStatus,omitempty"`
 	// Reason store the reason why the HelmRequest deploy failed
-	Reason string
-	// LastSyncAt store the last sync time
-	LastSyncAt metav1.Time `json:"lastSyncAt,omitempty"`
+	Reason string `json:"reason,omitempty"`
+	// LastUpdateAt store the last update time
+	LastUpdateAt metav1.Time `json:"lastUpdateAt,omitempty"`
 }
 
 type AppStatus string
