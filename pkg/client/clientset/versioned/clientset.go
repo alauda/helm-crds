@@ -21,6 +21,7 @@ package versioned
 import (
 	"fmt"
 
+	appv1 "github.com/alauda/helm-crds/pkg/client/clientset/versioned/typed/app/v1"
 	appv1alpha1 "github.com/alauda/helm-crds/pkg/client/clientset/versioned/typed/app/v1alpha1"
 	appv1beta1 "github.com/alauda/helm-crds/pkg/client/clientset/versioned/typed/app/v1beta1"
 	discovery "k8s.io/client-go/discovery"
@@ -32,6 +33,7 @@ type Interface interface {
 	Discovery() discovery.DiscoveryInterface
 	AppV1alpha1() appv1alpha1.AppV1alpha1Interface
 	AppV1beta1() appv1beta1.AppV1beta1Interface
+	AppV1() appv1.AppV1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
@@ -40,6 +42,7 @@ type Clientset struct {
 	*discovery.DiscoveryClient
 	appV1alpha1 *appv1alpha1.AppV1alpha1Client
 	appV1beta1  *appv1beta1.AppV1beta1Client
+	appV1       *appv1.AppV1Client
 }
 
 // AppV1alpha1 retrieves the AppV1alpha1Client
@@ -50,6 +53,11 @@ func (c *Clientset) AppV1alpha1() appv1alpha1.AppV1alpha1Interface {
 // AppV1beta1 retrieves the AppV1beta1Client
 func (c *Clientset) AppV1beta1() appv1beta1.AppV1beta1Interface {
 	return c.appV1beta1
+}
+
+// AppV1 retrieves the AppV1Client
+func (c *Clientset) AppV1() appv1.AppV1Interface {
+	return c.appV1
 }
 
 // Discovery retrieves the DiscoveryClient
@@ -81,6 +89,10 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
+	cs.appV1, err = appv1.NewForConfig(&configShallowCopy)
+	if err != nil {
+		return nil, err
+	}
 
 	cs.DiscoveryClient, err = discovery.NewDiscoveryClientForConfig(&configShallowCopy)
 	if err != nil {
@@ -95,6 +107,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 	var cs Clientset
 	cs.appV1alpha1 = appv1alpha1.NewForConfigOrDie(c)
 	cs.appV1beta1 = appv1beta1.NewForConfigOrDie(c)
+	cs.appV1 = appv1.NewForConfigOrDie(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClientForConfigOrDie(c)
 	return &cs
@@ -105,6 +118,7 @@ func New(c rest.Interface) *Clientset {
 	var cs Clientset
 	cs.appV1alpha1 = appv1alpha1.New(c)
 	cs.appV1beta1 = appv1beta1.New(c)
+	cs.appV1 = appv1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)
 	return &cs
