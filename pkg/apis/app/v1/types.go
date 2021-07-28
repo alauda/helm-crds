@@ -424,7 +424,7 @@ type HelmRequestStatus struct {
 
 	// The following 1 is the new field added
 	// TargetClusterSyncResults will store the chart sync result of every target cluster
-	TargetClusterSyncResults map[string]ClusterSyncResult `json:"targetClusterSyncResults,omitempty"`
+	TargetClusterSyncResults map[string]interface{} `json:"targetClusterSyncResults,omitempty"`
 
 	// Notes is the contents from helm (after helm install successfully it will be printed to the console
 	Notes string `json:"notes,omitempty"`
