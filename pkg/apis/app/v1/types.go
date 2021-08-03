@@ -449,7 +449,7 @@ type ClusterSyncResult struct {
 	// AppStatus store the status of the application
 	AppStatus AppStatus `json:"appStatus,omitempty"`
 	// Reason store the reason why the HelmRequest deploy failed
-	Reason string `json:"reason,omitempty"`
+	Reason *string `json:"reason,omitempty"`
 	// LastUpdateAt store the last update time
 	LastUpdateAt metav1.Time `json:"lastUpdateAt,omitempty"`
 }
