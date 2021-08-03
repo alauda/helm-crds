@@ -463,6 +463,7 @@ const (
 	AppEmpty          AppStatus = "Empty"
 	AppRunning        AppStatus = "Running"
 	AppStopped        AppStatus = "Stopped"
+	AppUnknown        AppStatus = "Unknown"
 )
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
