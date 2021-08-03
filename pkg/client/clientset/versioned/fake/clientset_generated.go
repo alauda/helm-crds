@@ -20,6 +20,8 @@ package fake
 
 import (
 	clientset "github.com/alauda/helm-crds/pkg/client/clientset/versioned"
+	appv1 "github.com/alauda/helm-crds/pkg/client/clientset/versioned/typed/app/v1"
+	fakeappv1 "github.com/alauda/helm-crds/pkg/client/clientset/versioned/typed/app/v1/fake"
 	appv1alpha1 "github.com/alauda/helm-crds/pkg/client/clientset/versioned/typed/app/v1alpha1"
 	fakeappv1alpha1 "github.com/alauda/helm-crds/pkg/client/clientset/versioned/typed/app/v1alpha1/fake"
 	appv1beta1 "github.com/alauda/helm-crds/pkg/client/clientset/versioned/typed/app/v1beta1"
@@ -86,4 +88,9 @@ func (c *Clientset) AppV1alpha1() appv1alpha1.AppV1alpha1Interface {
 // AppV1beta1 retrieves the AppV1beta1Client
 func (c *Clientset) AppV1beta1() appv1beta1.AppV1beta1Interface {
 	return &fakeappv1beta1.FakeAppV1beta1{Fake: &c.Fake}
+}
+
+// AppV1 retrieves the AppV1Client
+func (c *Clientset) AppV1() appv1.AppV1Interface {
+	return &fakeappv1.FakeAppV1{Fake: &c.Fake}
 }
