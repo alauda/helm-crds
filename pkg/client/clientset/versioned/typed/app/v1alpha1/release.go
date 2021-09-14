@@ -19,6 +19,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"context"
 	"time"
 
 	v1alpha1 "github.com/alauda/helm-crds/pkg/apis/app/v1alpha1"
@@ -71,7 +72,7 @@ func (c *releases) Get(name string, options v1.GetOptions) (result *v1alpha1.Rel
 		Resource("releases").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -88,7 +89,7 @@ func (c *releases) List(opts v1.ListOptions) (result *v1alpha1.ReleaseList, err 
 		Resource("releases").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -105,7 +106,7 @@ func (c *releases) Watch(opts v1.ListOptions) (watch.Interface, error) {
 		Resource("releases").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
-		Watch()
+		Watch(context.Background())
 }
 
 // Create takes the representation of a release and creates it.  Returns the server's representation of the release, and an error, if there is any.
@@ -115,7 +116,7 @@ func (c *releases) Create(release *v1alpha1.Release) (result *v1alpha1.Release, 
 		Namespace(c.ns).
 		Resource("releases").
 		Body(release).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -128,7 +129,7 @@ func (c *releases) Update(release *v1alpha1.Release) (result *v1alpha1.Release, 
 		Resource("releases").
 		Name(release.Name).
 		Body(release).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -144,7 +145,7 @@ func (c *releases) UpdateStatus(release *v1alpha1.Release) (result *v1alpha1.Rel
 		Name(release.Name).
 		SubResource("status").
 		Body(release).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -156,7 +157,7 @@ func (c *releases) Delete(name string, options *v1.DeleteOptions) error {
 		Resource("releases").
 		Name(name).
 		Body(options).
-		Do().
+		Do(context.Background()).
 		Error()
 }
 
@@ -172,7 +173,7 @@ func (c *releases) DeleteCollection(options *v1.DeleteOptions, listOptions v1.Li
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Timeout(timeout).
 		Body(options).
-		Do().
+		Do(context.Background()).
 		Error()
 }
 
@@ -185,7 +186,7 @@ func (c *releases) Patch(name string, pt types.PatchType, data []byte, subresour
 		SubResource(subresources...).
 		Name(name).
 		Body(data).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }

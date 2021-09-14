@@ -1,4 +1,4 @@
-package v1beta1
+package v1
 
 import (
 	"fmt"
@@ -127,9 +127,9 @@ type ChartRepoSpec struct {
 	URL string `json:"url"`
 	// Secret contains information about how to auth to this repo
 	Secret *v1.SecretReference `json:"secret,omitempty"`
-	// new in v1beta1
+	// new in v1
 	Type string `json:"type"`
-	// new in v1beta1.if type is Chart, this is optional and it will provide some compatible with v1alpha1
+	// new in v1.if type is Chart, this is optional and it will provide some compatible with v1alpha1
 	Source *ChartRepoSource `json:"source"`
 }
 
@@ -234,44 +234,6 @@ func (in *ChartVersion) DeepCopyInto(out *ChartVersion) {
 	out.ChartVersion = r
 }
 
-// ref: https://github.com/helm/helm/blob/master/docs/charts.md
-/*type ChartVersion struct {
-	// The URL to a relevant project page, git repo, or contact person
-	Home string `json:"home,omitempty"`
-	// Source is the URL to the source code of this chart
-	Sources string `json:"sources,omitempty"`
-	// A SemVer 2 conformant version string of the chart
-	Version string `json:"version,omitempty"`
-	// A one-sentence description of the chart
-	Description string `json:"description,omitempty"`
-	// A list of string keywords
-	Keywords []string `json:"keywords, omitempty"`
-	// A list of name and URL/email address combinations for the maintainer(s)
-	Maintainers []*chart.Maintainer `json:"maintainers,omitempty"`
-	// The URL to an icon file.
-	Icon string `json:"icon,omitempty"`
-
-	// The API Version of this chart.
-	APIVersion string `json:"apiVersion, omitempty"`
-
-	// The condition to check to enable chart
-	Condition string `json:"condition,omitempty"`
-
-	// The version of the application enclosed inside of this chart.
-	AppVersion string `json:"appVersion,omitempty"`
-	// Whether or not this chart is deprecated
-	Deprecated bool `json:"deprecated,omitempty"`
-	// Annotations are additional mappings uninterpreted by Helm,
-	// made available for inspection by other applications.
-	Annotations map[string]string `json:"annotations,omitempty"`
-	// KubeVersion is a SemVer constraint specifying the version of Kubernetes required.
-	KubeVersion string `json:"kubeVersion,omitempty"`
-
-	Created metav1.Time `json:"created,omitempty"`
-
-	Digest string `json:"digest,omitempty"`
-}*/
-
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 type ChartList struct {
@@ -302,6 +264,9 @@ type HelmRequestSpec struct {
 	// created after this chart. If this field is true, ClusterName will be ignored(useless)
 	InstallToAllClusters bool `json:"installToAllClusters,omitempty"`
 
+	// Source defines the source of chart, If this field is set, Chart and Version field will be ignored(useless)
+	Source *ChartSource `json:"source,omitempty"`
+
 	// Dependencies is the dependencies of this HelmRequest, it's a list of there names
 	// THe dependencies must lives in the same namespace, and each of them must be in Synced status
 	// before we sync this HelmRequest
@@ -320,6 +285,27 @@ type HelmRequestSpec struct {
 	ValuesFrom []ValuesFromSource `json:"valuesFrom,omitempty"`
 	// values is a map
 	HelmValues `json:",inline"`
+}
+
+type ChartSource struct {
+	HTTP *ChartSourceHTTP `json:"http,omitempty"`
+	OCI  *ChartSourceOCI  `json:"oci,omitempty"`
+}
+
+type ChartSourceHTTP struct {
+	// URL is the URL of the http(s) endpoint
+	URL string `json:"url"`
+	// SecretRef A Secret reference, the secret should contain accessKeyId (user name) base64 encoded, and secretKey (password) also base64 encoded
+	// +optional
+	SecretRef string `json:"secretRef,omitempty"`
+}
+
+type ChartSourceOCI struct {
+	// Repo is the repo of the oci artifact
+	Repo string `json:"repo"`
+	// SecretRef A Secret reference, the secret should contain accessKeyId (user name) base64 encoded, and secretKey (password) also base64 encoded
+	// +optional
+	SecretRef string `json:"secretRef,omitempty"`
 }
 
 //ValuesFromSource represents a source of values, only one of it's fields may be set
@@ -370,6 +356,43 @@ const (
 	HelmRequestUnknown HelmRequestPhase = "Unknown"
 )
 
+// HelmRequestConditionType is a valid value for HelmRequestCondition.Type
+type HelmRequestConditionType string
+
+// These are valid conditions of HelmRequestConditionType.
+const (
+	// ConditionReady indicates than this hr is synced.
+	ConditionReady HelmRequestConditionType = "Ready"
+
+	// ConditionValidated means target chart has been downloaded, and permission check passed
+	ConditionValidated HelmRequestConditionType = "Validated"
+
+	// ConditionInitialized means this helmrequest has been initialized (chart processed)
+	ConditionInitialized HelmRequestConditionType = "Initialized"
+)
+
+type HelmRequestCondition struct {
+	// Type is the type of the condition.
+	// More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions
+	Type HelmRequestConditionType `json:"type" protobuf:"bytes,1,opt,name=type,casttype=HelmRequestConditionType"`
+	// Status is the status of the condition.
+	// Can be True, False, Unknown.
+	// More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions
+	Status v1.ConditionStatus `json:"status" protobuf:"bytes,2,opt,name=status,casttype=ConditionStatus"`
+	// Last time we probed the condition.
+	// +optional
+	LastProbeTime *metav1.Time `json:"lastProbeTime,omitempty" protobuf:"bytes,3,opt,name=lastProbeTime"`
+	// Last time the condition transitioned from one status to another.
+	// +optional
+	LastTransitionTime *metav1.Time `json:"lastTransitionTime,omitempty" protobuf:"bytes,4,opt,name=lastTransitionTime"`
+	// Unique, one-word, CamelCase reason for the condition's last transition.
+	// +optional
+	Reason string `json:"reason,omitempty" protobuf:"bytes,5,opt,name=reason"`
+	// Human-readable message indicating details about last transition.
+	// +optional
+	Message string `json:"message,omitempty" protobuf:"bytes,6,opt,name=message"`
+}
+
 type HelmRequestStatus struct {
 	Phase HelmRequestPhase `json:"phase,omitempty"`
 	// LastSpecHash store the has value of the synced spec, if this value not equal to the current one,
@@ -380,6 +403,8 @@ type HelmRequestStatus struct {
 
 	// Notes is the contents from helm (after helm install successfully it will be printed to the console
 	Notes string `json:"notes,omitempty"`
+
+	Conditions []HelmRequestCondition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,2,rep,name=conditions"`
 
 	// Verions is the real version that installed
 	Version string `json:"version,omitempty"`

@@ -19,6 +19,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"context"
 	"time"
 
 	v1alpha1 "github.com/alauda/helm-crds/pkg/apis/app/v1alpha1"
@@ -71,7 +72,7 @@ func (c *helmRequests) Get(name string, options v1.GetOptions) (result *v1alpha1
 		Resource("helmrequests").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -88,7 +89,7 @@ func (c *helmRequests) List(opts v1.ListOptions) (result *v1alpha1.HelmRequestLi
 		Resource("helmrequests").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -105,7 +106,7 @@ func (c *helmRequests) Watch(opts v1.ListOptions) (watch.Interface, error) {
 		Resource("helmrequests").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
-		Watch()
+		Watch(context.Background())
 }
 
 // Create takes the representation of a helmRequest and creates it.  Returns the server's representation of the helmRequest, and an error, if there is any.
@@ -115,7 +116,7 @@ func (c *helmRequests) Create(helmRequest *v1alpha1.HelmRequest) (result *v1alph
 		Namespace(c.ns).
 		Resource("helmrequests").
 		Body(helmRequest).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -128,7 +129,7 @@ func (c *helmRequests) Update(helmRequest *v1alpha1.HelmRequest) (result *v1alph
 		Resource("helmrequests").
 		Name(helmRequest.Name).
 		Body(helmRequest).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -144,7 +145,7 @@ func (c *helmRequests) UpdateStatus(helmRequest *v1alpha1.HelmRequest) (result *
 		Name(helmRequest.Name).
 		SubResource("status").
 		Body(helmRequest).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -156,7 +157,7 @@ func (c *helmRequests) Delete(name string, options *v1.DeleteOptions) error {
 		Resource("helmrequests").
 		Name(name).
 		Body(options).
-		Do().
+		Do(context.Background()).
 		Error()
 }
 
@@ -172,7 +173,7 @@ func (c *helmRequests) DeleteCollection(options *v1.DeleteOptions, listOptions v
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Timeout(timeout).
 		Body(options).
-		Do().
+		Do(context.Background()).
 		Error()
 }
 
@@ -185,7 +186,7 @@ func (c *helmRequests) Patch(name string, pt types.PatchType, data []byte, subre
 		SubResource(subresources...).
 		Name(name).
 		Body(data).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
