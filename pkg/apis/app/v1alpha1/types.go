@@ -16,6 +16,7 @@ import (
 	"github.com/fatih/structs"
 	"helm.sh/helm/pkg/release"
 
+	"github.com/alauda/helm-crds/pkg/apis/app"
 	"helm.sh/helm/pkg/repo"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -60,11 +61,11 @@ type ReleaseSpec struct {
 
 type ReleaseStatus struct {
 	// FirstDeployed is when the release was first deployed.
-	FirstDeployed metav1.Time `json:"first_deployed,omitempty"`
+	FirstDeployed app.Time `json:"first_deployed,omitempty"`
 	// LastDeployed is when the release was last deployed.
-	LastDeployed metav1.Time `json:"last_deployed,omitempty"`
+	LastDeployed app.Time `json:"last_deployed,omitempty"`
 	// Deleted tracks when this object was deleted.
-	Deleted metav1.Time `json:"deleted,omitempty"`
+	Deleted app.Time `json:"deleted,omitempty"`
 	// Description is human-friendly "log entry" about this release.
 	Description string `json:"Description,omitempty"`
 	// Status is the current state of the release
@@ -75,10 +76,10 @@ type ReleaseStatus struct {
 
 func (in *ReleaseStatus) CopyFromReleaseInfo(info *release.Info) {
 	in.Status = info.Status
-	in.Deleted = metav1.NewTime(info.Deleted)
+	in.Deleted = app.Time{info.Deleted}
 	in.Description = info.Description
-	in.FirstDeployed = metav1.NewTime(info.FirstDeployed)
-	in.LastDeployed = metav1.NewTime(info.LastDeployed)
+	in.FirstDeployed = app.Time{info.FirstDeployed}
+	in.LastDeployed = app.Time{info.LastDeployed}
 	in.Notes = info.Notes
 }
 
