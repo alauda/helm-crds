@@ -264,6 +264,8 @@ type HelmRequestSpec struct {
 	// created after this chart. If this field is true, ClusterName will be ignored(useless)
 	InstallToAllClusters bool `json:"installToAllClusters,omitempty"`
 
+	// TargetClusters defines the target clusters which the chart will be installed
+	TargetClusters *TargetClusters `json:"targetClusters,omitempty"`
 	// Source defines the source of chart, If this field is set, Chart and Version field will be ignored(useless)
 	Source *ChartSource `json:"source,omitempty"`
 
@@ -285,6 +287,21 @@ type HelmRequestSpec struct {
 	ValuesFrom []ValuesFromSource `json:"valuesFrom,omitempty"`
 	// values is a map
 	HelmValues `json:",inline"`
+}
+
+type TargetClusters struct {
+	// ClusterNames store a list of cluster names
+	ClusterNames *TargetClusterNames `json:"clusterNames,omitempty"`
+	// ClusterLabels store the key value of labels to match clusters
+	ClusterLabels *TargetClusterLabels `json:"clusterLabels,omitempty"`
+}
+
+type TargetClusterNames struct {
+	Names []string `json:"names"`
+}
+
+type TargetClusterLabels struct {
+	LabelSelector map[string]string `json:"labelSelector"`
 }
 
 type ChartSource struct {
@@ -354,6 +371,9 @@ const (
 	HelmRequestPending HelmRequestPhase = "Pending"
 
 	HelmRequestUnknown HelmRequestPhase = "Unknown"
+
+	// HelmRequestUninstalling is telling that current helmrequest should be uninstalled
+	HelmRequestUninstalling HelmRequestPhase = "Uninstalling"
 )
 
 // HelmRequestConditionType is a valid value for HelmRequestCondition.Type
@@ -401,6 +421,9 @@ type HelmRequestStatus struct {
 	// SyncedClusters will store the synced clusters if InstallToAllClusters is true
 	SyncedClusters []string `json:"syncedClusters,omitempty"`
 
+	// TargetClusterSyncResults will store the chart sync result of every target cluster
+	TargetClusterSyncResults map[string]interface{} `json:"targetClusterSyncResults,omitempty"`
+
 	// Notes is the contents from helm (after helm install successfully it will be printed to the console
 	Notes string `json:"notes,omitempty"`
 
@@ -412,6 +435,34 @@ type HelmRequestStatus struct {
 	// Reason will store the reason why the HelmRequest deploy failed
 	Reason string `json:"reason,omitempty"`
 }
+
+type ClusterSyncResult struct {
+	// Name store the name of cluster
+	Name string `json:"name,omitempty"`
+	// Endpoint store the apiserver's endpoint of the cluster
+	Endpoint string `json:"endpoint,omitempty"`
+	// Phase store the phase of the chart which installed into current cluster
+	Phase HelmRequestPhase `json:"phase,omitempty"`
+	// The following 1 is the new field added
+	// AppStatus store the status of the application
+	AppStatus AppStatus `json:"appStatus,omitempty"`
+	// Reason store the reason why the HelmRequest deploy failed
+	Reason interface{} `json:"reason"`
+	// LastUpdateAt store the last update time
+	LastUpdateAt metav1.Time `json:"lastUpdateAt,omitempty"`
+}
+
+type AppStatus string
+
+const (
+	AppPending        AppStatus = "Pending"
+	AppPartialRunning AppStatus = "PartialRunning"
+	AppFailed         AppStatus = "Failed"
+	AppEmpty          AppStatus = "Empty"
+	AppRunning        AppStatus = "Running"
+	AppStopped        AppStatus = "Stopped"
+	AppUnknown        AppStatus = "Unknown"
+)
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
